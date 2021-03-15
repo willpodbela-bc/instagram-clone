@@ -1,0 +1,40 @@
+img{
+   object-fit: cover;
+}
+
+.postHeader{
+    display: flex;
+    align-items: center;
+    margin: 55px 0 10px 10px;
+}
+
+.profileImg{
+    width: 10%;
+    height: 10%;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.postImg{
+    width: 100%;
+
+}
+.postContent{
+    margin: 0 20px;
+}
+
+.marginRight10{
+    margin-right: 10px;
+}
+
+.marginRight5{
+    margin-right: 5px;
+}
+
+.marginTop10{
+    margin-top: 10px;
+}
+
+.timestamp{
+    color: gray;
+}

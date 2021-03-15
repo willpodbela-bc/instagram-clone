@@ -1,25 +1,25 @@
-import React from 'react';
-import css from './Header.module.css';
-import publicUrl from '../utils/publicUrl';
+import React from "react"
+import css from "./Header.module.css"
+import publicUrl from "../utils/publicUrl"
 
-function Header() {
+function Header(){
   return (
     <header className={css.header}>
       <div>
         <button>
-          <img src={publicUrl('/assets/camera.svg')} alt="Camera"/>
+          <img src={publicUrl("/assets/camera.svg")} alt="Camera"/>
         </button>
       </div>
       <div>
-        <img src={publicUrl('/assets/logo.png')} alt="Logo"/>
+        <img src={publicUrl("/assets/logo.png")} alt="Logo"/>
       </div>
       <div>
         <button>
-          <img src={publicUrl('/assets/message.svg')} alt="Camera"/>
+          <img src={publicUrl("/assets/message.svg")} alt="Camera"/>
         </button>
       </div>
     </header>
-  );
+  )
 }
 
-export default Header;
+export default Header
