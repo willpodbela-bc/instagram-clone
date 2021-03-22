@@ -38,3 +38,27 @@ img{
 .timestamp{
     color: gray;
 }
+
+.addComment{
+    margin: 6px 20px 0px 20px;
+    border-bottom: 1px solid #efefef;
+    padding: 10px 0;
+    display: flex;
+}
+.addComment input{
+    background: none;
+    border: none;
+    height: 16px;
+    outline: none;
+    font:inherit;
+    padding: 0;
+    width: 100%;
+}
+.addComment ::placeholder { 
+    color: #999;
+}
+.addComment button{
+    color:#3897f0;
+    font-weight: 600;
+    font-size: 16px;
+}

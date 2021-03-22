@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import css from "./App.module.css"
 import Header from "./Header"
 import Home from "./Home"
@@ -8,82 +8,103 @@ import NewPost from "./NewPost"
 import Activity from "./Activity"
 import Profile from "./Profile"
 import initialStore from "../utils/initialStore"
+import uniqueId from "../utils/uniqueId"
 
-class App extends React.Component{
-  constructor(props){
-    super(props)
-    this.state = {
-      page: "home",
-      store: initialStore
-    }
-    this.setPage = this.setPage.bind(this)
-    this.addLike = this.addLike.bind(this)
-		this.removeLike = this.removeLike.bind(this)
-  }
+function App(props){
+  const [page, setPage] = useState("home")
+  const [store, setStore] = useState(initialStore)
 
-  setPage(page){
-    this.setState({page: page})
-  }
-
-  renderMain(page){
+  function renderMain(page){
     switch(page){
       case "home": return (
         <Home
-          store={this.state.store}
-          onLike={this.addLike} 
-          onUnlike={this.removeLike}
+          store={store}
+          onLike={addLike} 
+          onUnlike={removeLike}
+          onComment={addComment}
         />
       )
       case "explore": return <Explore/>
-      case "newPost": return <NewPost/>
+      case "newPost": return (
+        <NewPost
+          store={store}
+          addPost={addPost}
+          cancelPost={cancelPost}
+        />
+      )
       case "activity": return <Activity/>
-      case "profile": return <Profile store={this.state.store} />
+      case "profile": return <Profile store={store} />
       default: return (
         <Home
-          store={this.state.store}
-          onLike={this.addLike} 
-          onUnlike={this.removeLike}
+          store={store}
+          onLike={addLike} 
+          onUnlike={removeLike}
+          onComment={addComment}
         />
       )
     }
   }
 
-  addLike(postId){
+  function addComment(postId, text){
+    const comment = {
+      userId: store.currentUserId, 
+      postId,
+      text,
+      datetime: new Date().toISOString()
+    }
+    setStore({
+      ...store,
+        comments:store.comments.concat(comment)
+    })
+  }
+
+  function addLike(postId){
     const like = {
-        userId: this.state.store.currentUserId, 
+        userId: store.currentUserId, 
         postId,
         datetime: new Date().toISOString()
     }
-    
-    this.setState(state=>({
-        store:{
-          ...state.store,
-          likes: state.store.likes.concat(like)
-        }
-    }))
+    setStore({
+      ...store,
+      likes: store.likes.concat(like)
+    })
   }
 
-  removeLike(postId){
-    // use filter and currentUserId to remove the like from the likes array
-    this.setState(state=>({
-      store:{
-        ...state.store,
-        likes: state.store.likes.filter(like=>!(like.userId===state.store.currentUserId && like.postId===postId))
-      }
-    }))
+  function removeLike(postId){
+    setStore({
+      ...store,
+      likes: store.likes.filter(like=>!(like.userId===store.currentUserId && like.postId===postId))
+    })
   }
 
-  render(){
-    return (
-      <div className={css.container}>
-        <Header/>
-        <main className={css.content}>
-          {this.renderMain(this.state.page)}
-        </main>
-        <Navbar onNavChange={this.setPage}/>
-      </div>
-    )
+  function addPost(photo, desc){
+    const post = {
+      id: uniqueId("post"),
+      userId: store.currentUserId,
+      photo: photo,
+      desc: desc,
+      datetime: new Date().toISOString()
+    }
+    setStore({
+      ...store,
+      posts: store.posts.concat(post)
+    })
+    setPage("home")
   }
+
+	function cancelPost(){
+		setPage("home")
+	}	
+
+  return (
+    <div className={css.container}>
+      <Header/>
+      <main className={css.content}>
+        {renderMain(page)}
+      </main>
+      <Navbar onNavChange={setPage}/>
+    </div>
+  )
 }
 
 export default App
