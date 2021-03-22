@@ -8,6 +8,13 @@ function Post(props){
     const post = props.post
     const likes = props.likes
     const comments = props.comments
+    function handleUnlike(e){
+        props.onUnlike(props.post.id)
+    }
+    
+    function handleLike(e){
+        props.onLike(props.post.id)
+    }
     return (
         <div>
             <div className={css.postHeader}>
@@ -18,9 +25,9 @@ function Post(props){
             <div className={css.postContent}>
                 <div className={css.marginTop10}>
                     {likes.self ? (
-                        <img src={publicUrl("/assets/unlike.svg")} className={css.marginRight10} alt="Unlike"></img>
+                        <img onClick={(e) => handleUnlike(e)} src={publicUrl("/assets/unlike.svg")} className={css.marginRight10} alt="Unlike" name="Unlike"></img>
                     ) : (
-                        <img src={publicUrl("/assets/like.svg")} className={css.marginRight10} alt="Like"></img>
+                        <img onClick={(e) => handleLike(e)} src={publicUrl("/assets/like.svg")} className={css.marginRight10} alt="Like" name="Like"></img>
                     )}
                     <img src={publicUrl("/assets/comment.svg")} alt="Comment"></img>
                 </div>
