@@ -9,41 +9,10 @@ import Activity from "./Activity"
 import Profile from "./Profile"
 import initialStore from "../utils/initialStore"
 import uniqueId from "../utils/uniqueId"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
-function App(props){
-  const [page, setPage] = useState("home")
+function App(){
   const [store, setStore] = useState(initialStore)
-
-  function renderMain(page){
-    switch(page){
-      case "home": return (
-        <Home
-          store={store}
-          onLike={addLike} 
-          onUnlike={removeLike}
-          onComment={addComment}
-        />
-      )
-      case "explore": return <Explore/>
-      case "newPost": return (
-        <NewPost
-          store={store}
-          addPost={addPost}
-          cancelPost={cancelPost}
-        />
-      )
-      case "activity": return <Activity/>
-      case "profile": return <Profile store={store} />
-      default: return (
-        <Home
-          store={store}
-          onLike={addLike} 
-          onUnlike={removeLike}
-          onComment={addComment}
-        />
-      )
-    }
-  }
 
   function addComment(postId, text){
     const comment = {
@@ -54,15 +23,15 @@ function App(props){
     }
     setStore({
       ...store,
-        comments:store.comments.concat(comment)
+      comments:store.comments.concat(comment)
     })
   }
 
   function addLike(postId){
     const like = {
-        userId: store.currentUserId, 
-        postId,
-        datetime: new Date().toISOString()
+      userId: store.currentUserId, 
+      postId,
+      datetime: new Date().toISOString()
     }
     setStore({
       ...store,
@@ -73,7 +42,7 @@ function App(props){
   function removeLike(postId){
     setStore({
       ...store,
-      likes: store.likes.filter(like=>!(like.userId===store.currentUserId && like.postId===postId))
+      likes: store.likes.filter(like => !(like.userId === store.currentUserId && like.postId === postId))
     })
   }
 
@@ -89,21 +58,63 @@ function App(props){
       ...store,
       posts: store.posts.concat(post)
     })
-    setPage("home")
   }
 
-	function cancelPost(){
-		setPage("home")
-	}	
+  function addFollower(userId, followerId){
+    const follower = {
+      userId: userId,
+      followerId: followerId
+    }
+    setStore({
+      ...store,
+      followers: store.followers.concat(follower)
+    })
+  }
+
+  function removeFollower(userId, followerId){
+    const follower = {
+      userId: userId,
+      followerId: followerId
+    }
+    setStore({
+      ...store,
+      followers: store.followers.filter(follower => !(follower.userId === userId && follower.followerId === followerId))
+    })
+  }
 
   return (
-    <div className={css.container}>
-      <Header/>
-      <main className={css.content}>
-        {renderMain(page)}
-      </main>
-      <Navbar onNavChange={setPage}/>
-    </div>
+    <Router basename={process.env.PUBLIC_URL}>
+      <div className={css.container}>
+        <Header/>
+        <main className={css.content}>
+          <Switch>
+            <Route path="/explore">
+              <Explore/>
+            </Route>
+            <Route path="/newpost">
+              <NewPost
+                store={store}
+                addPost={addPost}/>
+            </Route>
+            <Route path="/activity">
+              <Activity/>
+            </Route>
+            <Route path="/profile/:userId?">
+              <Profile store={store}
+                       onFollow={addFollower}
+                       onUnfollow={removeFollower}/>
+            </Route>
+            <Route path="/:postId?">
+              <Home store={store}
+                    onLike={addLike}
+                    onUnlike={removeLike}
+                    onComment={addComment}/>
+            </Route>
+          </Switch>
+        </main>
+        <Navbar/>
+      </div>
+    </Router>
   )
 }
 

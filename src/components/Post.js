@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import timespan from "../utils/timespan"
 import publicUrl from "../utils/publicUrl"
 import css from "./Post.module.css"
+import { Link } from "react-router-dom"
 
 function Post(props){
     const [comment, setComment] = useState("")
@@ -28,10 +29,12 @@ function Post(props){
 
     return (
         <div>
-            <div className={css.postHeader}>
-                <img src={publicUrl(user.photo)} className={css.profileImg} alt="Profile"></img>
-                <div><b>{user.id}</b></div>
-            </div>
+            <Link to={"/profile/" + user.id}>
+                <div className={css.postHeader}>
+                    <img src={publicUrl(user.photo)} className={css.profileImg} alt="Profile"></img>
+                    <div><b>{user.id}</b></div>
+                </div>
+            </Link>
             <img src={publicUrl(post.photo)} className={css.postImg} alt="Post"></img>
             <div className={css.postContent}>
                 <div className={css.marginTop10}>
@@ -40,7 +43,7 @@ function Post(props){
                     ) : (
                         <img onClick={(e) => handleLike(e)} src={publicUrl("/assets/like.svg")} className={css.marginRight10} alt="Like" name="Like"></img>
                     )}
-                    <button onClick={e=>setToggleComment(!toggleComment)}>
+                    <button onClick={e => setToggleComment(!toggleComment)}>
                         <img src={publicUrl("/assets/comment.svg")} alt="Comment"></img>
                     </button>
                 </div>
@@ -49,13 +52,17 @@ function Post(props){
                 </div>
                 <div className={css.marginTop10}>
                     <div>
-                        <b className={css.marginRight5}>{post.userId}</b>
+                        <Link to={"/profile/" + post.userId}>
+                            <b className={css.marginRight5}>{post.userId}</b>
+                        </Link>
                         {post.desc}
                     </div>
                     {comments.map(comment => {
                         return (
                             <div>
-                                <b className={css.marginRight5}>{comment.userId}</b>
+                                <Link to={"/profile/" + comment.userId}>
+                                    <b className={css.marginRight5}>{comment.userId}</b>
+                                </Link>
                                 {comment.text} 
                             </div>
                         )
@@ -65,7 +72,7 @@ function Post(props){
             </div>
             {toggleComment && 
                 <form className={css.addComment} onSubmit={handleSubmitComment}>
-                    <input type="text" placeholder="Add a comment…" value={comment} onChange={e=>setComment(e.target.value)}/>
+                    <input type="text" placeholder="Add a comment..." value={comment} onChange={e => setComment(e.target.value)}/>
                     <button type="submit">Post</button>
                 </form>
             }

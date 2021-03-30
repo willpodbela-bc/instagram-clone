@@ -1,12 +1,14 @@
 import React, { useState } from "react"
 import css from "./NewPost.module.css"
 import FileLoader from "./FileLoader.js"
+import { useHistory } from "react-router-dom"
 
-function NewPost(props) {
+function NewPost(props){
   const [dragging, setDragging] = useState(false)
   const [desc, setDesc] = useState("")
   const [photo, setPhoto] = useState(null)
   const [error, setError] = useState("")
+  const history = useHistory()
 
   function handleFileDragEnter(e){
     setDragging(true)
@@ -46,39 +48,40 @@ function NewPost(props) {
       props.addPost(photo, desc)
     }else{
       setError("Error! No photo provided.")
-      props.cancelPost()
+      history.goBack()
       setError("")
     }
   }
 
   function handleCancel(){
-    props.cancelPost()
+    history.goBack()
   }
 
   return (
     <div>
-        <div className={css.photo}>
-          {!photo?  <div className={css.message}>Drop your image</div>:
-                    <img src={photo} alt="New Post"/>}
-            <FileLoader
-              onDragEnter={handleFileDragEnter}
-              onDragLeave={handleFileDragLeave}
-              onDrop={handleFileDrop}
-            >
-	            <div className={[css.dropArea, dragging?css.dragging:null].join(" ")}
-              ></div>
-	          </FileLoader>
-        </div>
-        <div className={css.desc} >
-          <textarea value={desc} onChange={handleDescChange} />
-        </div>
-        <div className={css.error}>
-					{error}
-        </div>
-        <div className={css.actions}>
-          <button onClick={handleCancel}>Cancel</button>
-          <button onClick={handleSubmit}>Share</button>          
-        </div>
+      <div className={css.photo}>
+        { !photo ?
+          <div className={css.message}>Drop your image</div>
+        :
+          <img src={photo} alt="New Post"/>
+        }
+        <FileLoader
+          onDragEnter={handleFileDragEnter}
+          onDragLeave={handleFileDragLeave}
+          onDrop={handleFileDrop}>
+          <div className={[css.dropArea, dragging?css.dragging:null].join(" ")}></div>
+	      </FileLoader>
+      </div>
+      <div className={css.desc}>
+        <textarea value={desc} onChange={handleDescChange} />
+      </div>
+      <div className={css.error}>
+				{error}
+      </div>
+      <div className={css.actions}>
+        <button onClick={handleCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Share</button>          
+      </div>
     </div>
   )
 }
