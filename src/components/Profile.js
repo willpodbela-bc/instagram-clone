@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useContext } from "react"
+import { StoreContext } from "../contexts/StoreContext"
 import publicUrl from "../utils/publicUrl"
 import css from "./Profile.module.css"
 import PostThumbnail from "./PostThumbnail"
@@ -6,25 +7,25 @@ import { Link } from "react-router-dom"
 import { useParams } from "react-router-dom"
 
 function Profile(props){
+  let { posts, users, followers, currentUserId, addFollower, removeFollower } = useContext(StoreContext)
   let {userId} = useParams()
-  const {store} = props
-  let currentUserId;
+  let currentProfileId;
   if(userId){
-    currentUserId = userId
+    currentProfileId = userId
   }else{
-    currentUserId = store.currentUserId
+    currentProfileId = currentUserId
   }
-  const userInfo = store.users.find(user => user.id === currentUserId)
-  const followers = store.followers.filter(follower => follower.userId === currentUserId)
-  const following = store.followers.filter(follower => follower.followerId === currentUserId)
-  const posts = store.posts.filter(post => post.userId === currentUserId)
+  const userInfo = users.find(user => user.id === currentProfileId)
+  const currentFollowers = followers.filter(follower => follower.userId === currentProfileId)
+  const following = followers.filter(follower => follower.followerId === currentProfileId)
+  const currentPosts = posts.filter(post => post.userId === currentProfileId)
 
   function handleFollow(e){
-    props.onFollow(currentUserId, store.currentUserId)
+    addFollower(currentProfileId, currentUserId)
   }
 
   function handleUnfollow(e){
-    props.onUnfollow(currentUserId, store.currentUserId)
+    removeFollower(currentProfileId, currentUserId)
   }
 
   return (
@@ -32,8 +33,8 @@ function Profile(props){
       <div className={css.userHeader}>
         <img src={publicUrl(userInfo.photo)} className={css.profileImg} alt="Profile"></img>
         <div className={css.userHeaderText}>
-          <h2 className={css.username}>{currentUserId}</h2>
-          {followers.map(follower => follower.followerId).includes(store.currentUserId) ? (
+          <h2 className={css.username}>{currentProfileId}</h2>
+          {currentFollowers.map(follower => follower.followerId).includes(currentUserId) ? (
             <button onClick={(e) => handleUnfollow(e)} className={css.unfollowButton}>
               Unfollow
             </button>
@@ -51,11 +52,11 @@ function Profile(props){
       <hr className={css.divider} />
       <div className={css.userInfo}>
         <div className={css.userInfoCategory}>
-          <p className={css.userInfoText}><b>{posts.length}</b></p>
+          <p className={css.userInfoText}><b>{currentPosts.length}</b></p>
           <p className={css.userInfoText}>posts</p>
         </div>
         <div className={css.userInfoCategory}>
-          <p className={css.userInfoText}><b>{followers.length}</b></p>
+          <p className={css.userInfoText}><b>{currentFollowers.length}</b></p>
           <p className={css.userInfoText}>followers</p>
         </div>
         <div className={css.userInfoCategory}>
@@ -64,7 +65,7 @@ function Profile(props){
         </div>
       </div>
       <div className={css.posts}>
-        {posts.map(post => {
+        {currentPosts.map(post => {
           return (
             <Link key={post.id} to={"/" + post.id}>
               <PostThumbnail post={post}/>

@@ -1,9 +1,11 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
+import { StoreContext } from "../contexts/StoreContext"
 import css from "./NewPost.module.css"
 import FileLoader from "./FileLoader.js"
 import { useHistory } from "react-router-dom"
 
 function NewPost(props){
+  let { addPost } = useContext(StoreContext)
   const [dragging, setDragging] = useState(false)
   const [desc, setDesc] = useState("")
   const [photo, setPhoto] = useState(null)
@@ -45,7 +47,7 @@ function NewPost(props){
   function handleSubmit(e){
     e.preventDefault()
     if(photo !== ""){
-      props.addPost(photo, desc)
+      addPost(photo, desc)
     }else{
       setError("Error! No photo provided.")
       history.goBack()
