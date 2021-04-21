@@ -2,10 +2,10 @@ import React, { useState, useContext } from "react"
 import { StoreContext } from "../contexts/StoreContext"
 import css from "./NewPost.module.css"
 import FileLoader from "./FileLoader.js"
-import { useHistory } from "react-router-dom"
+import { useHistory, Redirect } from "react-router-dom"
 
 function NewPost(props){
-  let { addPost } = useContext(StoreContext)
+  let { addPost, currentUserId } = useContext(StoreContext)
   const [dragging, setDragging] = useState(false)
   const [desc, setDesc] = useState("")
   const [photo, setPhoto] = useState(null)
@@ -60,31 +60,35 @@ function NewPost(props){
   }
 
   return (
-    <div>
-      <div className={css.photo}>
-        { !photo ?
-          <div className={css.message}>Drop your image</div>
-        :
-          <img src={photo} alt="New Post"/>
-        }
-        <FileLoader
-          onDragEnter={handleFileDragEnter}
-          onDragLeave={handleFileDragLeave}
-          onDrop={handleFileDrop}>
-          <div className={[css.dropArea, dragging?css.dragging:null].join(" ")}></div>
-	      </FileLoader>
+    !currentUserId ? (
+      <Redirect to="login"/>
+    ) : (
+      <div>
+        <div className={css.photo}>
+          { !photo ?
+            <div className={css.message}>Drop your image</div>
+          :
+            <img src={photo} alt="New Post"/>
+          }
+          <FileLoader
+            onDragEnter={handleFileDragEnter}
+            onDragLeave={handleFileDragLeave}
+            onDrop={handleFileDrop}>
+            <div className={[css.dropArea, dragging?css.dragging:null].join(" ")}></div>
+          </FileLoader>
+        </div>
+        <div className={css.desc}>
+          <textarea value={desc} onChange={handleDescChange} />
+        </div>
+        <div className={css.error}>
+          {error}
+        </div>
+        <div className={css.actions}>
+          <button onClick={handleCancel}>Cancel</button>
+          <button onClick={handleSubmit}>Share</button>          
+        </div>
       </div>
-      <div className={css.desc}>
-        <textarea value={desc} onChange={handleDescChange} />
-      </div>
-      <div className={css.error}>
-				{error}
-      </div>
-      <div className={css.actions}>
-        <button onClick={handleCancel}>Cancel</button>
-        <button onClick={handleSubmit}>Share</button>          
-      </div>
-    </div>
+    )
   )
 }
 

@@ -7,6 +7,8 @@ import Explore from "./Explore"
 import NewPost from "./NewPost"
 import Activity from "./Activity"
 import Profile from "./Profile"
+import Login from "./Login"
+import Signup from "./Signup"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import StoreContextProvider from "../contexts/StoreContext"
 
@@ -18,6 +20,12 @@ function App(){
           <Header />
           <main className={css.content}>
             <Switch>
+              <Route path="/login">
+                <Login />
+              </Route>
+              <Route path="/signup">
+                <Signup />
+              </Route>
               <Route path="/explore">
                 <Explore />
               </Route>
